@@ -1,0 +1,166 @@
+<html><!--ThingSpeak_30-12-21_01  OK-->   
+    <head> <!--thinsp;-->
+        <script> 
+            let canale = 1578204;
+            let campo=2;
+            let coloreSondo = "00ffbf";
+            let colore = "ff4000";
+            let larghezza ="1000";
+            let altezza ="500";
+            
+            let inDa, inData;
+            let fiDa, fiData;
+            let inOre="00:00";
+            let fiOre ;
+            let inMin, fiMin ;
+            let anno;
+            let mese;
+            let giorno;
+            let oggi, oreOggi;
+            let dataOggi;
+            function avvio(){
+                oggi = new Date();
+                anno=oggi.getFullYear();
+                mese=oggi.getMonth()+1;
+                giorno=oggi.getDate();
+                fiOre = oggi.getHours();
+                inMin=oggi.getMinutes();
+                if(mese<10)mese="0"+mese;
+                if(giorno<10)giorno="0"+giorno;
+                dataOggi = anno+'-'+mese+'-'+giorno;
+                if(fiOre<10) fiOre ="0"+fiOre;
+                if(inMin<10)inMin="0"+inMin;
+                oreOggi =fiOre+':'+inMin;
+                document.getElementById("canale").value=canale;
+                document.getElementById("campo").value="1";
+                document.getElementById("larghezza").value=larghezza;
+                document.getElementById("altezza").value=altezza;
+                document.getElementById("dataIn").value=dataOggi;
+                document.getElementById("dataFi").value=dataOggi;
+                document.getElementById("timeIn").value="00:00";
+                document.getElementById("timeFi").value=oreOggi;
+            }    
+            function visualizza() {
+                canale=document.getElementById("canale").value;
+                campo=document.getElementById("campo").value; 
+                larghezza=document.getElementById("larghezza").value;
+                altezza=document.getElementById("altezza").value;
+                inDa=document.getElementById("dataIn").value; 
+                inOre=document.getElementById("timeIn").value;
+                fiDa=document.getElementById("dataFi").value;
+                fiOre=document.getElementById("timeFi").value;
+                inData=inDa+ "%20"+inOre +":00";
+                fiData =fiDa + "%20"+fiOre +":00";
+                
+
+                document.getElementById("grafico").width=larghezza;
+                document.getElementById("grafico").height=altezza;
+
+
+          		document.getElementById("grafico").data="https://thingspeak.com"+
+                "/channels/"         +canale+
+                "/charts/"             +campo+
+                "?start="               +inData+
+                "&end="                 +fiData+
+                "&width="             +larghezza+  
+                "&height="            +altezza+           
+                "&bgcolor=%23" +coloreSondo+
+                "&color=%23"     + colore
+            } 
+            function sceltaCanale(){
+               document.getElementById("canale").value=document.getElementById("canali").value;
+            }
+            function sceltaCampo(){
+               document.getElementById("canale").value=document.getElementById("canali").value;
+            }     
+        </script> 
+        <style>
+            .RIGA5{
+                background-color:green;
+                color:yellow;
+                height:80px;
+                width:100px;
+                text-align:center;
+            }
+            .PU1 {
+               border-radius: 22px;
+                background-color: lightblue;
+                font-size: 26px;
+                width:250px;
+                height:60px;
+            }
+            .RIGA1{
+                background-color:aquamarine;
+            } 
+            .textbox{
+                background-color:orange;
+            }         
+        </style>
+    </head>
+    <body onload="avvio()"> 
+        <div>&nbsp; &emsp; &emsp; &emsp; &emsp; &emsp;&emsp;  &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+            ThingSpeak 
+        </div>
+        <table border='1'>
+            <tr class="RIGA1">
+                <td >Canale:
+                    <select class="textbox" name="cars" id="canale" onchange="sceltaCanale()">
+                        <option value="1578204">2 Termometri</option>
+								<option value="1612407">Conta Persone</option>
+                        <option value="1612409">Essicatore</option>
+								<option value="1583511">Essicatore Carlo</option>
+
+                    </select>
+                </td>
+                <td>Campo:
+                    <select class="textbox" name="cars" id="campo" onchange="sceltaCampo()">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>    
+                </td>
+            </tr>
+            <tr  class="RIGA1">
+                <td >
+                    Larghezza grafico:<input type="text" class="textbox"  id="larghezza" size="6">
+                </td>
+                <td>    
+                    Altezza grafico:<input type="text" class="textbox" id="altezza" size="6">
+                </td>
+            </tr>
+            <tr  class="RIGA1">
+                <td>
+                     Data inizio
+                     <input type="date" class="textbox" id="dataIn">
+                </td>
+                <td>     
+                      Ore 
+                    <input type="time" class="textbox" id="timeIn">
+                </td>
+             </tr>
+             <tr  class="RIGA1">   
+                <td>
+                    &ensp; Data fine
+                     <input type="date" class="textbox" id="dataFi">
+                </td>
+                <td>     
+                      Ore 
+                    <input type="time" class="textbox" id="timeFi">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"  class="RIGA5">
+                    <button class="PU1" onclick="visualizza()">Visualizza grafico</button> 
+                </td>
+            </tr>
+     </table>
+    <div>
+        <object  id="grafico" type="text/html" style="overflow:auto;border:1px ridge blue"></object>
+    </div>
+     </body> 
+</html> 

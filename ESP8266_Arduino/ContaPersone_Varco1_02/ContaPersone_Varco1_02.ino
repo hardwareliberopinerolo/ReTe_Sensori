@@ -6,15 +6,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-
-/*
-extern "C" {
-#include "user_interface.h" // this is for the RTC memory read/write functions
-}
-*/
-
 #include "config.h"
-
 
 #define debug //Decommentare per debug
 
@@ -25,17 +17,18 @@ PubSubClient mqttClient( client );
 const int RTC_block=64;
 
 
-
 //---Publish messaggi a ThingSpeak channel.
 void mqttPublish(long pubChannelID, String message) {
   
   String topicString ="channels/" + String( pubChannelID ) + "/publish";
-
+#ifdef debug
  Serial.println(topicString);
  Serial.println( message);
-
+#endif
  mqttClient.publish( topicString.c_str(), message.c_str() ) ;
 }
+
+
 
 //---Connessione al broker------------------------------------------
 void MQTT_connette() {
@@ -72,12 +65,13 @@ void setup() {
 #endif    
  
  connectWifi();                  //Connessione al WiFi
+ //delay(500);
  inviaMQTT();
 
  #ifdef debug    
  Serial.println("Vado a dormire...");
 #endif 
-delay(500);  
+ delay(500);  
  ESP.deepSleep(0); //Sleep
 
 
@@ -90,13 +84,22 @@ void loop() {
 //-------------------------------------------------------
 void inviaMQTT(void){
 
- 
+
   if (!mqttClient.connected()) { //Riconnette MQTT se sconnesso
+     #ifdef debug
+     Serial.println("MQTT");
+     #endif
      MQTT_connette(); 
   }
-  
-  //mqttClient.loop(); //loop per maintenere connesso al server.
 
+  while ( !mqttClient.connected() ){
+    #ifdef debug
+    Serial.print("m");
+    #endif
+    mqttClient.connect( clientID, mqttUserName, mqttPass );
+   }
+ 
+  //mqttClient.loop(); //loop per maintenere connesso al server.
 
 int memoria;
 uint64 Conteggio;
@@ -110,34 +113,20 @@ Serial.println(memoria);
 
 if (memoria==0){
 system_rtc_mem_read((RTC_block+sizeof(memoria)), &Conteggio, sizeof(Conteggio));
-/*Serial.print("Conteggio: ");
-Serial.println(Conteggio);*/
-Conteggio =Conteggio +10;
-/*Serial.print("Conteggio: ");
-Serial.println( Conteggio);*/
-system_rtc_mem_write((RTC_block+sizeof(memoria)), &Conteggio, sizeof(Conteggio));
 
+Conteggio =Conteggio +10;
+
+system_rtc_mem_write((RTC_block+sizeof(memoria)), &Conteggio, sizeof(Conteggio));
 
 #ifdef debug  
   Serial.print("Invio a - channelID: ");
   Serial.println(channelID);
   Serial.print("Conteggio: ");  
   Serial.println(Conteggio);
-
-
 #endif  
-  
- //mqttClient.loop(); //loop per maintenere connesso al server. 
- mqttPublish( channelID, "field1=" + String(Conteggio) );
-  //mqttPublish( channelID, "field1=26" );
 
- /*
-  mqttPublish( channelID, "field1=" + String(Conteggio) +
-                         "&field2=" + String(10)+
-                         "&field3=" + String(25) +
-                         "&field4=" + String(65));
-*/
-
+mqttPublish( channelID, "field1=" + String(Conteggio) );
+ 
 }
 
 else{ //Azzero memoria RTC al primo avvio
@@ -150,8 +139,6 @@ else{ //Azzero memoria RTC al primo avvio
  system_rtc_mem_write(RTC_block, &memoria, sizeof(memoria));
  system_rtc_mem_write((RTC_block+sizeof(memoria)), &Conteggio, sizeof(Conteggio)) ;
   }
-
-
 }
 
 

@@ -1,4 +1,4 @@
-# ReTe_Sensori
+# Progetti Sermig ReTe
 
 Archivio dei progetti sviluppati in collaborazione con Sermig ReTe
 

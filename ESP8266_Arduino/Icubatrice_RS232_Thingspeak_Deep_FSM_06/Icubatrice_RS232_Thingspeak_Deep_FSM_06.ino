@@ -46,8 +46,8 @@ const char* ssid = "xxx";
 const char* pass = "xxx";
 */
 
-const char* ssid = "sss";
-const char* pass = "ppp";
+const char* ssid = "xxx";
+const char* pass = "xxx";
 
 
 const char* server = "mqtt3.thingspeak.com";
@@ -57,11 +57,11 @@ const int mqttPort = 1883;
 https://thingspeak.com/channels/1612410
 */
 
-const int channelID = 1612410; //Incubatrice
+const int channelID = xxx; //Incubatrice
 
 const char mqttUserName[] = "xxx";
 const char clientID[] = "xxx";
-const char mqttPass[] = "yyy";
+const char mqttPass[] = "xxx";
 
 
 

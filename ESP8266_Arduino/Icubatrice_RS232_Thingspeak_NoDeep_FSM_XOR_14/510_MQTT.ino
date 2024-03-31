@@ -1,10 +1,47 @@
+
+void fcrc(void){
+
+T_CRC= F_XOR(Chr_Inizio, Messaggio[0]);
+
+#ifdef debug
+Serial.println(T_CRC, HEX);
+#endif
+
+for (int i=1; i<15; i++){
+
+T_CRC= F_XOR(T_CRC, Messaggio[i]);
+
+#ifdef debug
+Serial.println(T_CRC, HEX);
+#endif
+}
+
+T_CRC= F_XOR(T_CRC,Chr_CRC );
+
+#ifdef debug
+Serial.print("CRC: ");
+Serial.print(CRC, HEX);
+Serial.print(" - CRC calcolato: ");
+Serial.println(T_CRC, HEX);
+#endif
+}
+
 //----- Invia dati --------------------------------------------------
 void finvia_dati(void){
   MQTT_connette(); 
 
   if(stato!=dormire){
     mqttClient.loop(); //loop per maintenere connesso al server.
-    String testo="field5=" + String(Messaggio[6]) +
+
+fcrc(); //Calcola CRC
+
+if ((unsigned char)T_CRC == (unsigned char)CRC){
+    
+    String testo="field1=" + String(Messaggio[0]) +
+                 "&field2=" + String(Messaggio[1]) +
+                 "&field3=" + String(Messaggio[2]) +
+                 "&field4=" + String(Messaggio[3]) +
+                 "&field5=" + String(Messaggio[6]) +
                  "&field6=" + String(Messaggio[7]) +
                  "&field7=" + String(Messaggio[8]) +
                  "&field8=" + String(Messaggio[9]); 
@@ -21,8 +58,20 @@ void finvia_dati(void){
     }
     else{
           Serial.println("Messaggio MQTT NON inviato");
-          stato=dormire;
+                  stato=disconnectWifi;
     }
+
+  }
+else{
+Serial.println("Dati non consistenti");
+stato=dormire;
+}
+
+//reset variabili
+i=0;
+memset(Messaggio, '\0', sizeof(Messaggio)*sizeof(byte));
+memset(buff, '\0', sizeof(buff)*sizeof(byte));
+
   }
 }
 
@@ -64,7 +113,10 @@ void MQTT_connette() {
       Serial.print( mqttClient.state() );
       Serial.println( " Riprova fra qualche secondo" );
       delay(1000);
+		WiFi.disconnect(); 
+      Serial.println("Connessione wifi disconessa");
       stato=dormire;
+		break;
 #endif      
     }
   }

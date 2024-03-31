@@ -97,6 +97,13 @@ stato=legge_seriale;
 void felaboramessaggio(){
 
       memcpy(&Messaggio, buff, i);
+
+      Serial.print("PMV:"); Serial.print(String(Messaggio[0]));
+      Serial.print("MVU:"); Serial.print(String(Messaggio[1]));
+      Serial.print("STR:"); Serial.print(String(Messaggio[2]));
+      Serial.print("RSB:"); Serial.print(String(Messaggio[3]));
+
+
       Serial.print("T1:"); Serial.print(String(Messaggio[6]));
       Serial.print(" - T2:"); Serial.print(String(Messaggio[7]));
       Serial.print(" - H:"); Serial.print(String(Messaggio[8]));

@@ -11,7 +11,7 @@ https://thingspeak.com/channels/1612409
 */
 
 
-const int channelID = 1612409; 
+const int channelID = xxx; 
 
 
 const char mqttUserName[] = "xxx";
